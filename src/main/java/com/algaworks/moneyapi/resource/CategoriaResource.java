@@ -3,14 +3,14 @@ package com.algaworks.moneyapi.resource;
 import com.algaworks.moneyapi.model.Categoria;
 import com.algaworks.moneyapi.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/categoria")
 public class CategoriaResource {
 
@@ -20,5 +20,20 @@ public class CategoriaResource {
     @GetMapping
     public List<Categoria> listar() {
         return categoriaRepository.findAll();
+    }
+
+    @PostMapping
+    public ResponseEntity<Categoria> criar(@RequestBody Categoria categoria) {
+        Categoria respostaCategoria = categoriaRepository.save(categoria);
+
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
+                .buildAndExpand(categoria.getCodigo()).toUri();
+
+        return ResponseEntity.created(uri).body(respostaCategoria);
+    }
+
+    @GetMapping("/{codigo}")
+    public Categoria buscarPeloCodigo(@PathVariable("codigo") Long id){
+        return categoriaRepository.findById(id).get();
     }
 }
