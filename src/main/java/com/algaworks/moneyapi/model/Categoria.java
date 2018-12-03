@@ -1,6 +1,8 @@
 package com.algaworks.moneyapi.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +23,8 @@ public class Categoria {
     }
 
 
+    @NotNull
+    @Size(max = 50)
     public String getNome() {
         return nome;
     }

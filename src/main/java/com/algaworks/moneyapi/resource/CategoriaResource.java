@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class CategoriaResource {
     }
 
     @PostMapping
-    public ResponseEntity<Categoria> criar(@RequestBody Categoria categoria) {
+    public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria) {
         Categoria respostaCategoria = categoriaRepository.save(categoria);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
@@ -34,6 +35,7 @@ public class CategoriaResource {
 
     @GetMapping("/{codigo}")
     public Categoria buscarPeloCodigo(@PathVariable("codigo") Long id){
-        return categoriaRepository.findById(id).get();
+        //TODO atualizar para versão mais atual do spring-boot
+        return categoriaRepository.findOne(id);
     }
 }
