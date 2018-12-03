@@ -1,26 +1,15 @@
 package com.algaworks.moneyapi.model;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Objects;
 
 @Entity
 @Table(name = "categorias")
-public class Categoria {
+public class Categoria extends BaseID{
 
-    private Long codigo;
     private String nome;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(Long codigo) {
-        this.codigo = codigo;
-    }
 
 
     @NotNull
@@ -37,13 +26,17 @@ public class Categoria {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
         Categoria categoria = (Categoria) o;
-        return Objects.equals(codigo, categoria.codigo) &&
-                Objects.equals(nome, categoria.nome);
+
+        return nome != null ? nome.equals(categoria.nome) : categoria.nome == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(codigo, nome);
+        int result = super.hashCode();
+        result = 31 * result + (nome != null ? nome.hashCode() : 0);
+        return result;
     }
 }
