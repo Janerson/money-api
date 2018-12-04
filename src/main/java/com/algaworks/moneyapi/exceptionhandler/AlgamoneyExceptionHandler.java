@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
@@ -38,6 +39,13 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, criarListaErros(ex.getBindingResult()), headers, HttpStatus.BAD_REQUEST, request);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        String msgUser = ex.getLocalizedMessage();
+        String msgDev = ex.getMessage();
+        List<Erro> erros = Arrays.asList(new Erro(msgUser, msgDev));
+        return handleExceptionInternal(ex,erros,headers,HttpStatus.BAD_REQUEST,request);
+    }
 
     private List<Erro> criarListaErros(BindingResult result) {
         List<Erro> erros = new ArrayList<>();

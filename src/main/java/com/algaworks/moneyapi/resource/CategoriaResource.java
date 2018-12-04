@@ -36,6 +36,6 @@ public class CategoriaResource {
     @GetMapping("/{codigo}")
     public Categoria buscarPeloCodigo(@PathVariable("codigo") Long id){
         //TODO atualizar para versão mais atual do spring-boot
-        return categoriaRepository.findOne(id);
+        return categoriaRepository.getOne(id);
     }
 }

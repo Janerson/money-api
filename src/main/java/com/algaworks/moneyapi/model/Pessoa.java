@@ -1,25 +1,33 @@
 package com.algaworks.moneyapi.model;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "pessoas")
-public class Pessoa extends BaseID {
+public class Pessoa {
 
+    private long codigo;
     private String nome;
-    private boolean ativo;
+    private Boolean ativo;
     private Endereco endereco;
 
+    public Pessoa() {
+    }
 
-    public Pessoa(String nome, boolean ativo) {
-        this.nome = nome;
-        this.ativo = ativo;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(long codigo) {
+        this.codigo = codigo;
     }
 
     @NotNull
+    @Size(max = 50)
     public String getNome() {
         return nome;
     }
