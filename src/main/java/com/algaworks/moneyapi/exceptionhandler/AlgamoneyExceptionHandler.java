@@ -1,8 +1,10 @@
 package com.algaworks.moneyapi.exceptionhandler;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -54,8 +56,17 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
         String msgUser = messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale());
         String msgDev = ex.getMessage();
         List<Erro> erros = Arrays.asList(new Erro(msgUser, msgDev));
-
         return handleExceptionInternal(ex,erros,new HttpHeaders(),HttpStatus.NOT_FOUND,request);
+    }
+
+
+    @ExceptionHandler({DataIntegrityViolationException.class})
+    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
+        String msgUser = messageSource.getMessage("recurso.nao-permitida", null, LocaleContextHolder.getLocale());
+        String msgDev = ExceptionUtils.getRootCauseMessage(ex);
+        List<Erro> erros = Arrays.asList(new Erro(msgUser, msgDev));
+
+        return handleExceptionInternal(ex,erros,new HttpHeaders(),HttpStatus.BAD_REQUEST,request);
     }
 
     private List<Erro> criarListaErros(BindingResult result) {
