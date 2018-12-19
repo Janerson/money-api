@@ -12,4 +12,4 @@ CREATE TABLE lancamentos(
   foreign key (codigo_pessoa) references pessoas(codigo)
 )ENGINE=InnoDB default CHARSET=utf8;
 
-insert into lancamentos(descricao,data_vencimento,data_pagamento,valor,observacao,tipo,codigo_categoria,codigo_pessoa)values ('PAGAMENTO FARMACIA','2018-12-13','2019-02-01',150.80,'Nao esquecer de cobrar','DESPESA',3,2);
+insert into lancamentos(descricao,data_vencimento,data_pagamento,valor,observacao,tipo,codigo_categoria,codigo_pessoa)values ('PAGAMENTO FARMACIA','2018-12-13','2019-02-01',150.80,'Nao esquecer de cobrar','DESPESA',3,1);

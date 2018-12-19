@@ -16,12 +16,14 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,44 +32,44 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
     private MessageSource messageSource;
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
 
-        String msgUser = messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale());
-        String msgDev = ex.getMessage();
-        List<Erro> erros = Arrays.asList(new Erro(msgUser, msgDev));
-        return handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, criarListErros(ex, "mensagem.invalida", null),
+                headers, HttpStatus.BAD_REQUEST, request);
     }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status, WebRequest request) {
+
         return handleExceptionInternal(ex, criarListaErros(ex.getBindingResult()), headers, HttpStatus.BAD_REQUEST, request);
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String msgUser = ex.getLocalizedMessage();
-        String msgDev = ex.getMessage();
-        List<Erro> erros = Arrays.asList(new Erro(msgUser, msgDev));
-        return handleExceptionInternal(ex,erros,headers,HttpStatus.BAD_REQUEST,request);
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
+                                                                         HttpHeaders headers,
+                                                                         HttpStatus status, WebRequest request) {
+        ;
+        return handleExceptionInternal(ex, criarListErros(ex, null, null), headers, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler({EmptyResultDataAccessException.class})
-    public ResponseEntity<Object> handleEmptyResultDataAccessException( EmptyResultDataAccessException ex,WebRequest request){
-        String msgUser = messageSource.getMessage("recurso.nao-encontrado", null, LocaleContextHolder.getLocale());
-        String msgDev = ex.getMessage();
-        List<Erro> erros = Arrays.asList(new Erro(msgUser, msgDev));
-        return handleExceptionInternal(ex,erros,new HttpHeaders(),HttpStatus.NOT_FOUND,request);
+    @ExceptionHandler({EmptyResultDataAccessException.class, NoSuchElementException.class})
+    public ResponseEntity<Object> handleEmptyResultDataAccessException(Exception ex, WebRequest request) {
+        return handleExceptionInternal(ex, criarListErros(ex, "recurso.nao-encontrado", request),
+                new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
 
     @ExceptionHandler({DataIntegrityViolationException.class})
-    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
-        String msgUser = messageSource.getMessage("recurso.nao-permitida", null, LocaleContextHolder.getLocale());
-        String msgDev = ExceptionUtils.getRootCauseMessage(ex);
-        List<Erro> erros = Arrays.asList(new Erro(msgUser, msgDev));
-
-        return handleExceptionInternal(ex,erros,new HttpHeaders(),HttpStatus.BAD_REQUEST,request);
+    public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
+        return handleExceptionInternal(ex, criarListErros(ex, "recurso.nao-permitido", null),
+                new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+
 
     private List<Erro> criarListaErros(BindingResult result) {
         List<Erro> erros = new ArrayList<>();
@@ -79,6 +81,14 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         return erros;
+    }
+
+    private List<Erro> criarListErros(Exception ex, String msgResource, WebRequest request) {
+        String msgUser = msgResource != null ? messageSource.getMessage(msgResource, null, LocaleContextHolder.getLocale())
+                : ex.getLocalizedMessage();
+        String msgDev = request == null ? ExceptionUtils.getRootCauseMessage(ex) : ExceptionUtils.getRootCauseMessage(ex)
+                + " for " + ((ServletWebRequest) request).getRequest().getRequestURI();
+        return Arrays.asList(new Erro(msgUser, msgDev));
     }
 
     private class Erro {
