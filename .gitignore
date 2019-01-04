@@ -15,6 +15,9 @@
 *.iws
 *.iml
 *.ipr
+/.idea
+/.mvn
+/target
 
 ### NetBeans ###
 /nbproject/private/
@@ -23,6 +26,3 @@
 /dist/
 /nbdist/
 /.nb-gradle/
-/.idea
-/.mvn
-/target

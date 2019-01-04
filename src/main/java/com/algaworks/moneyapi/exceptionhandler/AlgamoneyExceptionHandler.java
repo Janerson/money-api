@@ -91,7 +91,8 @@ public class AlgamoneyExceptionHandler extends ResponseEntityExceptionHandler {
         return Arrays.asList(new Erro(msgUser, msgDev));
     }
 
-    private class Erro {
+    public static class Erro {
+
         private String msgUser;
         private String msgDev;
 
