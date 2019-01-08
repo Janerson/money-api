@@ -3,6 +3,7 @@ package com.algaworks.moneyapi.resource;
 import com.algaworks.moneyapi.exceptionhandler.AlgamoneyExceptionHandler;
 import com.algaworks.moneyapi.model.Lancamento;
 import com.algaworks.moneyapi.repository.LancamentoRepository;
+import com.algaworks.moneyapi.repository.filter.LancamentoFilter;
 import com.algaworks.moneyapi.services.LancamentoService;
 import com.algaworks.moneyapi.services.exception.PessoaInexistenteOuInativaException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,10 +51,15 @@ public class LancamentoResource {
         return ResponseEntity.created(uri).body(lancamento);
     }
 
+    @GetMapping("/filtro")
+    public List<Lancamento> pesquisar(LancamentoFilter filter) {
+        return lancamentoRepository.filtrar(filter);
+    }
+
     @ExceptionHandler({PessoaInexistenteOuInativaException.class})
-    public ResponseEntity<Object> handlePessoaInexistenteOuInativaExcepetion(PessoaInexistenteOuInativaException ex){
-        String mensagemUsuario = messageSource.getMessage("pessoa.inexistente-ou-inativa",null, LocaleContextHolder.getLocale());
-        String mensagemDev = ex.getCause() != null ? ex.getCause().toString(): ex.toString();
+    public ResponseEntity<Object> handlePessoaInexistenteOuInativaExcepetion(PessoaInexistenteOuInativaException ex) {
+        String mensagemUsuario = messageSource.getMessage("pessoa.inexistente-ou-inativa", null, LocaleContextHolder.getLocale());
+        String mensagemDev = ex.getCause() != null ? ex.getCause().toString() : ex.toString();
         List<AlgamoneyExceptionHandler.Erro> erros = Arrays.asList(new AlgamoneyExceptionHandler.Erro(mensagemUsuario, mensagemDev));
         return ResponseEntity.badRequest().body(erros);
     }
