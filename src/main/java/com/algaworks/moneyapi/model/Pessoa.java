@@ -37,13 +37,19 @@ public class Pessoa {
     }
 
     @NotNull
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    @Transient
     public boolean isAtivo() {
         return ativo;
     }
 
-    public void setAtivo(boolean ativo) {
-        this.ativo = ativo;
-    }
 
     @Embedded
     public Endereco getEndereco() {
@@ -54,12 +60,5 @@ public class Pessoa {
         this.endereco = endereco;
     }
 
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
 
 }
