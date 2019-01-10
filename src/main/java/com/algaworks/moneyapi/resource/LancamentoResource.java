@@ -9,6 +9,7 @@ import com.algaworks.moneyapi.services.exception.PessoaInexistenteOuInativaExcep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -39,6 +40,12 @@ public class LancamentoResource {
     @GetMapping("/{id}")
     public Lancamento lancamentoPorId(@PathVariable long id) {
         return lancamentoRepository.findById(id).get();
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerLancamento(@PathVariable("id") long id) {
+        lancamentoService.removerLancamento(id);
     }
 
     @PostMapping
