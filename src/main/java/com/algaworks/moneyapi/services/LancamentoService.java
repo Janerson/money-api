@@ -34,7 +34,7 @@ public class LancamentoService {
     }
 
     private Lancamento getLancamento(Long id) {
-        return lancamentoRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(0));
+        return lancamentoRepository.findById(id).orElseThrow(() -> new EmptyResultDataAccessException(Long.signum(id)));
     }
 
 

@@ -9,6 +9,8 @@ import com.algaworks.moneyapi.services.exception.PessoaInexistenteOuInativaExcep
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +35,8 @@ public class LancamentoResource {
     private MessageSource messageSource;
 
     @GetMapping
-    public List<Lancamento> listarLancamentos() {
-        return lancamentoRepository.findAll();
+    public Page<Lancamento> listarLancamentos(Pageable pageable) {
+        return lancamentoRepository.findAll(pageable);
     }
 
     @GetMapping("/{id}")
@@ -45,7 +47,8 @@ public class LancamentoResource {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removerLancamento(@PathVariable("id") long id) {
-        lancamentoService.removerLancamento(id);
+        //lancamentoService.removerLancamento(id);
+        lancamentoRepository.deleteById(id);
     }
 
     @PostMapping
@@ -59,8 +62,8 @@ public class LancamentoResource {
     }
 
     @GetMapping("/filtro")
-    public List<Lancamento> pesquisar(LancamentoFilter filter) {
-        return lancamentoRepository.filtrar(filter);
+    public Page<Lancamento> pesquisar(LancamentoFilter filter, Pageable pageable) {
+        return lancamentoRepository.filtrar(filter, pageable);
     }
 
     @ExceptionHandler({PessoaInexistenteOuInativaException.class})
